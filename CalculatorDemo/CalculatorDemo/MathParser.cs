@@ -2,7 +2,7 @@
 
 namespace CalculatorDemo;
 
-internal class MathParser : IMathParser
+public class MathParser : IMathParser
 {
     public List<string> Normalise(string expression)
     {

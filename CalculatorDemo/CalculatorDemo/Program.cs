@@ -23,9 +23,8 @@ public class Program
 
     private static void ConfigureServices(IServiceCollection services)
     {
-        
-        services.AddScoped<ICalculatorService, CalculatorService>();
         services.AddScoped<IMathParser, MathParser>();
+        services.AddScoped<ICalculatorService, CalculatorService>();
         services.AddSingleton<Application>();
     }
 }
