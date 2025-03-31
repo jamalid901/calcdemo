@@ -1,71 +1,72 @@
-﻿namespace ConsoleAppCalculator
+﻿namespace CalculatorDemo;
+
+//Décision: pour ne pas que Program.cs soit rempli de code qui gère les inputs, cette classe s'occupe entièrement de la saisie de l'application Console,
+//ce qui fait que Program.cs est plus lisible et ne fait que relayer les informations à cette classe
+public class Application
 {
-    public class Application
+    private readonly ICalculatorService _service;
+
+    public Application(ICalculatorService service)
     {
-        private readonly ICalculatorService _service;
+        _service = service;
+    }
 
-        public Application(ICalculatorService service)
+    public void Run()
+    {
+        string userInput;
+
+        do
         {
-            _service = service;
-        }
+            DisplayMenu();
 
-        public void Run()
-        {
-            string userInput;
+            userInput = Console.ReadLine();
 
-            do
+            switch (userInput)
             {
-                DisplayMenu();
+                case "1":
 
-                userInput = Console.ReadLine();
+                    Console.WriteLine("\nSVP entrez une expression mathématique: ");
 
-                switch (userInput)
-                {
-                    case "1":
+                    string expression = Console.ReadLine();
 
-                        Console.WriteLine("\nSVP entrez une expression mathématique: ");
+                    try
+                    {
 
-                        string expression = Console.ReadLine();
+                        double result = _service.EvaluateExpression(expression);
 
-                        try
-                        {
+                        Console.WriteLine($"Le résultat est: {result} ");
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(ex.Message);
+                    }
 
-                            double result = _service.EvaluateExpression(expression);
+                    Console.WriteLine("\n");
 
-                            Console.WriteLine($"Le résultat est: {result} ");
-                        }
-                        catch (Exception ex)
-                        {
-                            Console.WriteLine(ex.Message);
-                        }
+                    break;
 
-                        Console.WriteLine("\n");
+                case "2":
+                    Console.WriteLine("\nMerci d'avoir utilisé la calculatrice.\n");
+                    break;
 
-                        break;
-
-                    case "2":
-                        Console.WriteLine("\nMerci d'avoir utilisé la calculatrice.\n");
-                        break;
-
-                    default:
-                        Console.WriteLine("\nChoix invalide, veuillez réessayer.\n");
-                        break;
-                }
-
-            } while (userInput != null && userInput != "2");
-
-            Console.ReadKey();
-
-            void DisplayMenu()
-            {
-                Console.WriteLine("========================================");
-                Console.WriteLine("              CALCULATRICE              ");
-                Console.WriteLine("========================================\n");
-                Console.WriteLine("1. Effectuer un test");
-                Console.WriteLine("2. Quitter");
-                Console.WriteLine("----------------------------------------\n");
-                Console.Write("Faites votre choix : ");
+                default:
+                    Console.WriteLine("\nChoix invalide, veuillez réessayer.\n");
+                    break;
             }
+
+        } while (userInput != null && userInput != "2");
+
+        Console.ReadKey();
+
+        void DisplayMenu()
+        {
+            Console.WriteLine("========================================");
+            Console.WriteLine("              CALCULATRICE              ");
+            Console.WriteLine("========================================\n");
+            Console.WriteLine("1. Effectuer un test");
+            Console.WriteLine("2. Quitter");
+            Console.WriteLine("----------------------------------------\n");
+            Console.Write("Faites votre choix : ");
         }
     }
 }

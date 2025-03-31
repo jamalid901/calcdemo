@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 
-namespace ConsoleAppCalculator;
+namespace CalculatorDemo;
 
 public class Program
 {
@@ -23,7 +23,9 @@ public class Program
 
     private static void ConfigureServices(IServiceCollection services)
     {
-        services.AddTransient<ICalculatorService, CalculatorService>();
+        
+        services.AddScoped<ICalculatorService, CalculatorService>();
+        services.AddScoped<IMathParser, MathParser>();
         services.AddSingleton<Application>();
     }
 }

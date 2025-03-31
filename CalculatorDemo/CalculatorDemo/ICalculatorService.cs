@@ -1,7 +1,6 @@
-﻿namespace ConsoleAppCalculator
+﻿namespace CalculatorDemo;
+
+public interface ICalculatorService
 {
-    public interface ICalculatorService
-    {
-        public double EvaluateExpression(string expression);
-    }
+    public double EvaluateExpression(string expression);
 }

@@ -1,10 +1,11 @@
 ﻿using System.Globalization;
 using System.Text.RegularExpressions;
 
-namespace ConsoleAppCalculator;
+namespace CalculatorDemo;
 
 public class CalculatorService : ICalculatorService
 {
+    private readonly IMathParser _mathParser;
     private readonly Dictionary<string, int> _lstOrder = new Dictionary<string, int>
         {
             { "+", 1 },
@@ -15,59 +16,23 @@ public class CalculatorService : ICalculatorService
             { "sqrt", 4 }
         };
 
+    public CalculatorService(IMathParser mathParser)
+    {
+        _mathParser = mathParser;
+    }
+
     /// <summary>
-    /// Evaluer l'expréssion donnée en entrée
+    /// Evaluer l'expression donnée en entrée
     /// </summary>
     /// <param name="expression"></param>
     /// <returns></returns>
     public double EvaluateExpression(string expression)
     {
-        var lstInput = NormalizedExpression(expression);
+        var lstInput = _mathParser.Normalise(expression);
 
         var lstRealExpression = ExtractRealExpression(lstInput);
 
         return EvaluateRealExpression(lstRealExpression);
-    }
-
-    // Analyse de la chaîne et séparation des éléments
-    private static List<string> NormalizedExpression(string expression)
-    {
-        if (string.IsNullOrEmpty(expression))
-        {
-            throw new ArgumentException("Expression invalide");
-        }
-
-        //gestion des signes doubles
-        expression = expression.Replace(" ", "")
-                               .Replace("--", "+")  // -- devient +
-                               .Replace("+-", "-")
-                               .Replace("-+", "-")
-                               .Replace("++", "+");
-
-        string pattern = @"(\d+(\.\d+)?|sqrt|\+|\-|\*|\/|\^|\(|\))";
-
-        // Valider l'expression pour éviter les erreurs
-        if (!Regex.IsMatch(expression, pattern))
-            throw new ArgumentException("Caractères invalides dans la chaine.");
-
-        MatchCollection matches = Regex.Matches(expression, pattern);
-
-        var lstInputs = new List<string>();
-
-        for (int i = 0; i < matches.Count; i++)
-        {
-            string input = matches[i].Value;
-
-            // Gestion des signes négatifs au début ou après une parenthèse
-            if (input == "-" && (i == 0 || (i > 0 && matches[i - 1].Value == "(")))
-            {
-                lstInputs.Add("0"); // Ajoute un 0 pour gérer les négatifs correctement
-            }
-
-            lstInputs.Add(input);
-        }
-
-        return lstInputs;
     }
 
     // Conversion des inputs en enlevant toute parenthèse et space
@@ -118,7 +83,7 @@ public class CalculatorService : ICalculatorService
     }
 
     // Évalue l'expression réelle
-    private static double EvaluateRealExpression(List<string> lstRealExpression)
+    private double EvaluateRealExpression(List<string> lstRealExpression)
     {
         Stack<double> valueStack = new Stack<double>();
 
